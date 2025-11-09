@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>Create Order</h2>
+  <form id="orderForm">
+    <!-- Items (Array of Products) -->
+    <fieldset>
+      <legend>Item 1</legend>
+      <input type="text" id="product1" placeholder="Product Name" required>
+      <input type="number" id="quantity1" placeholder="Quantity" min="1" required>
+    </fieldset>
+
+    <!-- Order Details -->
+    <input type="text" id="paymentMethod" placeholder="Payment Method" required>
+    <input type="number" step="0.01" id="subtotal" placeholder="Subtotal" required>
+    <input type="number" step="0.01" id="shipping" placeholder="Shipping Cost">
+    <input type="number" step="0.01" id="tax" placeholder="Tax">
+    <input type="number" step="0.01" id="discount" placeholder="Discount">
+    <input type="number" step="0.01" id="total" placeholder="Total" required>
+
+    <button type="submit">Submit Order</button>
+  </form>
+
+  <script>
+    document.getElementById('orderForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const orderData = {
+        items: [{
+          product: document.getElementById('product1').value,
+          quantity: parseInt(document.getElementById('quantity1').value)
+        }],
+        paymentMethod: document.getElementById('paymentMethod').value,
+        subtotal: parseFloat(document.getElementById('subtotal').value),
+        shipping: parseFloat(document.getElementById('shipping').value) || 0,
+        tax: parseFloat(document.getElementById('tax').value) || 0,
+        discount: parseFloat(document.getElementById('discount').value) || 0,
+        total: parseFloat(document.getElementById('total').value)
+      };
+
+      try {
+        const response = await fetch('http://localhost:3000/api/save-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+        const result = await response.json();
+        alert(`Order saved! ID: ${result.order._id}`);
+      } catch (err) {
+        alert(`Error: ${err.message}`);
+      }
+    });
+  </script>
+</body>
+</html>
